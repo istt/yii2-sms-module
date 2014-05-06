@@ -1,0 +1,22 @@
+{
+	"name": "istt/yii2-sms-module",
+	"description": "A module for Yii2",
+	"keywords": ["istt", "ndtrung", "yii", "sms"],
+	"type": "yii2-module",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Nguyen Dinh Trung",
+			"email": "ndtrung@istt.com.vn",
+			"homepage": "http://istt.com.vn"
+		}
+	],
+	"require": {
+		"yiisoft/yii2": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"istt\\sms\\": ""
+		}
+	}
+}

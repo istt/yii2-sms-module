@@ -1,0 +1,1086 @@
+-- MySQL dump 10.13  Distrib 5.1.45, for pc-linux-gnu (i686)
+--
+-- Host: localhost    Database: yii_isms
+-- ------------------------------------------------------
+-- Server version	5.1.45-community
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `YiiLog`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `YiiLog` (
+  `id` int(11) NOT NULL,
+  `level` varchar(128) DEFAULT NULL,
+  `category` varchar(128) DEFAULT NULL,
+  `logtime` int(11) DEFAULT NULL,
+  `message` text,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `authassignment`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `authassignment` (
+  `itemname` varchar(255) DEFAULT NULL COMMENT 'authitem.name',
+  `userid` int(11) DEFAULT NULL COMMENT 'user.id',
+  `bizrule` text COMMENT 'Business rules',
+  `data` text
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `authitem`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `authitem` (
+  `name` varchar(255) NOT NULL COMMENT 'Name of the authitem',
+  `type` int(11) NOT NULL COMMENT '0|operation, 1|task, 2|role',
+  `description` text COMMENT 'Not used. Use dbmessages instead.',
+  `bizrule` text COMMENT 'Business rule',
+  `data` text,
+  PRIMARY KEY (`name`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `authitemchild`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `authitemchild` (
+  `parent` varchar(255) DEFAULT NULL COMMENT 'authitem.name of parent',
+  `child` varchar(255) DEFAULT NULL COMMENT 'authitem.name of child'
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `blacklist`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `blacklist` (
+  `fid` int(11) NOT NULL COMMENT 'filter.id',
+  `isdn` varchar(20) NOT NULL DEFAULT '' COMMENT 'Phone number of the customer',
+  PRIMARY KEY (`fid`,`isdn`),
+  KEY `phonenumber` (`isdn`),
+  KEY `fid` (`fid`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `block`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `block` (
+  `bid` int(11) NOT NULL,
+  `title` varchar(100) DEFAULT 'NULL',
+  `label` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `type` int(11) DEFAULT NULL,
+  `option` text,
+  `status` int(1) DEFAULT NULL,
+  `url` text,
+  `display` int(1) NOT NULL,
+  PRIMARY KEY (`bid`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `blocktheme`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `blocktheme` (
+  `block` int(11) DEFAULT NULL,
+  `theme` varchar(255) DEFAULT NULL,
+  `region` varchar(40) DEFAULT NULL,
+  `weight` int(3) NOT NULL
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `blocktype`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `blocktype` (
+  `btid` int(11) NOT NULL,
+  `title` varchar(100) DEFAULT 'NULL',
+  `description` text,
+  `component` varchar(255) DEFAULT 'NULL',
+  `callback` varchar(255) DEFAULT 'NULL',
+  `viewfile` varchar(255) DEFAULT 'NULL',
+  PRIMARY KEY (`btid`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `campaign`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `campaign` (
+  `id` int(9) NOT NULL,
+  `title` varchar(40) DEFAULT '',
+  `description` text,
+  `createtime` int(11) DEFAULT NULL,
+  `updatetime` int(11) DEFAULT NULL,
+  `codename` varchar(20) DEFAULT '',
+  `request_date` date DEFAULT NULL,
+  `request_owner` varchar(40) DEFAULT '',
+  `datasender` varchar(80) DEFAULT NULL,
+  `tosubscriber` text,
+  `start` datetime DEFAULT NULL,
+  `end` datetime DEFAULT NULL,
+  `status` int(1) DEFAULT '0',
+  `finished` tinyint(1) DEFAULT NULL,
+  `approved` tinyint(1) DEFAULT NULL,
+  `active` tinyint(1) NOT NULL,
+  `sender` varchar(20) DEFAULT NULL,
+  `ready` int(1) DEFAULT NULL,
+  `org` int(11) DEFAULT '0',
+  `type` tinyint(1) DEFAULT '0',
+  `throughput` int(11) DEFAULT NULL,
+  `col` int(11) DEFAULT NULL,
+  `isdncol` int(11) NOT NULL,
+  `template` text,
+  `priority` tinyint(6) DEFAULT '0',
+  `velocity` int(11) DEFAULT '1',
+  `cpworkday` varchar(10) NOT NULL,
+  `emailbox` int(11) DEFAULT NULL,
+  `esubject` varchar(255) DEFAULT NULL,
+  `eattachment` varchar(255) DEFAULT NULL,
+  `ftpserver` int(11) DEFAULT NULL,
+  `smsimport` bigint(20) DEFAULT NULL,
+  `blockimport` int(11) DEFAULT NULL,
+  `limit_exceeded` tinyint(1) DEFAULT NULL,
+  `send` bigint(20) DEFAULT NULL,
+  `blocksend` bigint(20) DEFAULT NULL,
+  `sent` bigint(20) DEFAULT NULL,
+  `blocksent` bigint(20) DEFAULT NULL,
+  `orderid` int(11) DEFAULT NULL,
+  `exported` int(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `emailbox` (`emailbox`),
+  KEY `fftpsetting` (`ftpserver`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `category`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `category` (
+  `id` int(11) NOT NULL,
+  `root` int(10) DEFAULT NULL,
+  `lft` int(10) NOT NULL,
+  `rgt` int(10) NOT NULL,
+  `level` int(5) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `comments`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` int(11) NOT NULL,
+  `entity` varchar(255) NOT NULL,
+  `pkey` int(11) NOT NULL,
+  `uid` int(10) NOT NULL,
+  `createtime` int(10) NOT NULL,
+  `visible` int(1) NOT NULL,
+  `comment` text,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cpfile`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `cpfile` (
+  `cid` int(11) NOT NULL,
+  `fid` int(11) NOT NULL,
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`cid`,`fid`),
+  KEY `cid` (`cid`),
+  KEY `fid` (`fid`),
+  CONSTRAINT `cpfile_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `campaign` (`id`),
+  CONSTRAINT `cpfile_ibfk_2` FOREIGN KEY (`fid`) REFERENCES `datafile` (`fid`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cpfilter`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `cpfilter` (
+  `cid` int(11) NOT NULL,
+  `fid` int(11) NOT NULL,
+  `type` int(1) NOT NULL,
+  PRIMARY KEY (`cid`,`fid`,`type`),
+  KEY `fid` (`fid`),
+  KEY `cid` (`cid`),
+  CONSTRAINT `cpfilter_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `campaign` (`id`),
+  CONSTRAINT `cpfilter_ibfk_2` FOREIGN KEY (`fid`) REFERENCES `filter` (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cporder`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `cporder` (
+  `cid` int(11) NOT NULL,
+  `oid` int(11) NOT NULL,
+  `smsblock` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`cid`,`oid`),
+  KEY `cid` (`cid`),
+  KEY `tid` (`oid`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cpworktime`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `cpworktime` (
+  `cid` int(11) NOT NULL,
+  `tid` int(11) NOT NULL,
+  PRIMARY KEY (`cid`,`tid`),
+  KEY `cid` (`cid`),
+  KEY `tid` (`tid`),
+  CONSTRAINT `cpworktime_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `campaign` (`id`),
+  CONSTRAINT `cpworktime_ibfk_2` FOREIGN KEY (`tid`) REFERENCES `worktime` (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dailyreport`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `dailyreport` (
+  `id_dailyreport` int(11) NOT NULL,
+  `created_date` date NOT NULL,
+  `sms_sent` int(11) NOT NULL,
+  `block_sent` int(11) NOT NULL,
+  `sms_delivered` int(11) NOT NULL,
+  `block_delivered` int(11) NOT NULL,
+  `campaign_id` int(11) NOT NULL,
+  PRIMARY KEY (`id_dailyreport`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `datafile`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `datafile` (
+  `fid` int(11) NOT NULL COMMENT 'File ID.',
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `createtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The users.uid of the user who is associated with the file.',
+  `filename` varchar(255) NOT NULL DEFAULT '' COMMENT 'Name of the file with no path components. This may differ from the basename of the URI if the file is renamed to avoid overwriting an existing file.',
+  `uri` varchar(255) NOT NULL DEFAULT '' COMMENT 'The URI to access the file (either local or remote).',
+  `filemime` varchar(255) NOT NULL DEFAULT '' COMMENT 'The file’s MIME type.',
+  `filesize` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The size of the file in bytes.',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'A field indicating the status of the file. Two status are defined in core: temporary (0) and permanent (1). Temporary files older than DRUPAL_MAXIMUM_TEMP_FILE_AGE will be removed during a cron run.',
+  `updatetime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UNIX timestamp for when the file was added.',
+  `uid` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`fid`),
+  UNIQUE KEY `uri` (`uri`),
+  KEY `uid` (`createtime`),
+  KEY `status` (`status`),
+  KEY `timestamp` (`updatetime`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dlr`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `dlr` (
+  `smsc` varchar(40) DEFAULT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `destination` varchar(40) DEFAULT NULL,
+  `source` varchar(40) DEFAULT NULL,
+  `service` varchar(40) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `mask` int(10) DEFAULT NULL,
+  `status` int(10) DEFAULT NULL,
+  `boxc` varchar(40) DEFAULT NULL,
+  `campaign_id` int(10) DEFAULT NULL,
+  KEY `campaign_id` (`campaign_id`),
+  KEY `destination` (`destination`),
+  KEY `source` (`source`),
+  KEY `time` (`time`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `emailsetting`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `emailsetting` (
+  `id` int(11) NOT NULL,
+  `hostname` varchar(40) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `option` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `filter`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `filter` (
+  `id` int(11) NOT NULL,
+  `title` varchar(20) DEFAULT NULL,
+  `reply_refuse` varchar(256) DEFAULT 'Ban da tu choi thanh cong dich vu',
+  `reply_accept` varchar(256) DEFAULT 'Ban da chap nhan thanh cong dich vu',
+  `reply_false_syntax` varchar(256) DEFAULT 'Ban da nhap sai cu phap',
+  `description` varchar(256) DEFAULT NULL,
+  `ftpblack` int(11) DEFAULT NULL COMMENT 'FTP Server ID for this filter - blacklist sync',
+  `ftpblackfile` varchar(255) DEFAULT NULL COMMENT 'Filename prefix for blacklist sync',
+  `ftpwhite` int(11) DEFAULT NULL COMMENT 'FTP Server ID for this filter - whitelist sync',
+  `ftpwhitefile` varchar(255) DEFAULT NULL COMMENT 'Filename prefix for Whitelist sycn',
+  `reply_accept_dup` varchar(256) DEFAULT NULL,
+  `reply_refuse_dup` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ftpfilename`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `ftpfilename` (
+  `cid` int(11) NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`cid`,`filename`),
+  KEY `cid` (`cid`),
+  CONSTRAINT `ftpfilename_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `campaign` (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ftpsetting`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `ftpsetting` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `hostname` varchar(40) NOT NULL,
+  `username` varchar(40) NOT NULL,
+  `password` varchar(40) NOT NULL,
+  `path` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `menu`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `menu` (
+  `id` int(11) NOT NULL,
+  `root` int(10) DEFAULT NULL,
+  `lft` int(10) NOT NULL,
+  `rgt` int(10) NOT NULL,
+  `level` int(5) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `template` varchar(255) DEFAULT NULL,
+  `visible` int(1) NOT NULL,
+  `task` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `message`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `message` (
+  `id` int(11) NOT NULL,
+  `language` varchar(10) DEFAULT NULL,
+  `translation` text,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `migration`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `migration` (
+  `version` varchar(255) NOT NULL,
+  `apply_time` int(11) DEFAULT NULL,
+  `module` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`version`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `node`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `node` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `alias` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `body` text NOT NULL,
+  `createtime` int(11) NOT NULL,
+  `updatetime` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `cid` int(11) DEFAULT NULL,
+  `type` text,
+  `status` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `node_tag`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `node_tag` (
+  `nid` int(10) NOT NULL,
+  `tid` int(11) NOT NULL
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `organization`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `organization` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `profiles`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `profiles` (
+  `user_id` int(11) NOT NULL,
+  `lastname` varchar(50) NOT NULL,
+  `firstname` varchar(50) NOT NULL,
+  `birthday` date NOT NULL DEFAULT '0000-00-00',
+  PRIMARY KEY (`user_id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `profiles_fields`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `profiles_fields` (
+  `id` int(11) NOT NULL,
+  `varname` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `field_type` varchar(50) NOT NULL,
+  `field_size` int(3) NOT NULL,
+  `field_size_min` int(3) NOT NULL,
+  `required` int(1) NOT NULL,
+  `match` varchar(255) NOT NULL,
+  `range` varchar(255) NOT NULL,
+  `error_message` varchar(255) NOT NULL,
+  `other_validator` text NOT NULL,
+  `default` varchar(255) NOT NULL,
+  `widget` varchar(255) NOT NULL,
+  `widgetparams` text NOT NULL,
+  `position` int(3) NOT NULL,
+  `visible` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rights`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `rights` (
+  `itemname` varchar(255) NOT NULL COMMENT 'authitem.name',
+  `type` int(11) NOT NULL COMMENT '0|operation, 1|task, 2|role',
+  `weight` int(11) NOT NULL COMMENT 'Order',
+  PRIMARY KEY (`itemname`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `send_sms`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `send_sms` (
+  `momt` enum('MO','MT','DLR','3rd') DEFAULT NULL,
+  `sender` varchar(20) DEFAULT NULL,
+  `receiver` varchar(20) NOT NULL DEFAULT '',
+  `udhdata` blob,
+  `msgdata` text,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `smsc_id` varchar(255) DEFAULT NULL,
+  `service` varchar(255) DEFAULT NULL,
+  `account` varchar(255) DEFAULT NULL,
+  `id` bigint(20) DEFAULT NULL,
+  `sms_type` bigint(20) DEFAULT NULL,
+  `mclass` bigint(20) DEFAULT NULL,
+  `mwi` bigint(20) DEFAULT NULL,
+  `coding` bigint(20) DEFAULT NULL,
+  `compress` bigint(20) DEFAULT NULL,
+  `validity` bigint(20) DEFAULT NULL,
+  `deferred` bigint(20) DEFAULT NULL,
+  `dlr_mask` bigint(20) DEFAULT NULL,
+  `dlr_url` varchar(255) DEFAULT NULL,
+  `pid` bigint(20) DEFAULT NULL,
+  `alt_dcs` bigint(20) DEFAULT NULL,
+  `rpi` bigint(20) DEFAULT NULL,
+  `charset` varchar(255) DEFAULT NULL,
+  `boxc_id` varchar(255) DEFAULT NULL,
+  `binfo` varchar(255) DEFAULT NULL,
+  `meta_data` text NOT NULL,
+  `campaign_id` int(9) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`campaign_id`,`receiver`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sendok`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `sendok` (
+  `isdn` bigint(20) NOT NULL,
+  PRIMARY KEY (`isdn`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sent_sms`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `sent_sms` (
+  `momt` enum('MO','MT','DLR','3rd') DEFAULT NULL,
+  `sender` varchar(20) DEFAULT NULL,
+  `receiver` varchar(20) NOT NULL DEFAULT '',
+  `udhdata` blob,
+  `msgdata` text,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `smsc_id` varchar(255) DEFAULT NULL,
+  `service` varchar(255) DEFAULT NULL,
+  `account` varchar(255) DEFAULT NULL,
+  `id` bigint(20) DEFAULT NULL,
+  `sms_type` bigint(20) DEFAULT NULL,
+  `mclass` bigint(20) DEFAULT NULL,
+  `mwi` bigint(20) DEFAULT NULL,
+  `coding` bigint(20) DEFAULT NULL,
+  `compress` bigint(20) DEFAULT NULL,
+  `validity` bigint(20) DEFAULT NULL,
+  `deferred` bigint(20) DEFAULT NULL,
+  `dlr_mask` bigint(20) DEFAULT NULL,
+  `dlr_url` varchar(255) DEFAULT NULL,
+  `pid` bigint(20) DEFAULT NULL,
+  `alt_dcs` bigint(20) DEFAULT NULL,
+  `rpi` bigint(20) DEFAULT NULL,
+  `charset` varchar(255) DEFAULT NULL,
+  `boxc_id` varchar(255) DEFAULT NULL,
+  `binfo` varchar(255) DEFAULT NULL,
+  `campaign_id` int(9) DEFAULT '0',
+  `meta_data` text,
+  `dlr` int(1) DEFAULT '0',
+  KEY `campaign_id` (`campaign_id`),
+  KEY `receiver` (`receiver`),
+  KEY `sender` (`sender`),
+  KEY `time` (`time`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `settings`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `settings` (
+  `id` int(11) NOT NULL,
+  `category` varchar(64) NOT NULL DEFAULT 'system',
+  `key` varchar(255) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `smsorder`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `smsorder` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `userid` int(11) NOT NULL,
+  `createtime` int(11) NOT NULL,
+  `updatetime` int(11) NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  `expired` datetime NOT NULL,
+  `smscount` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sourcemessage`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `sourcemessage` (
+  `id` int(11) NOT NULL,
+  `category` varchar(32) DEFAULT NULL,
+  `message` text,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `syntax`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `syntax` (
+  `fid` int(11) NOT NULL,
+  `syntax` varchar(255) NOT NULL DEFAULT '',
+  `type` tinyint(1) NOT NULL,
+  PRIMARY KEY (`fid`,`syntax`),
+  CONSTRAINT `syntax_ibfk_1` FOREIGN KEY (`fid`) REFERENCES `filter` (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tags`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `tags` (
+  `id` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `frequency` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `template`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `template` (
+  `id` int(9) NOT NULL,
+  `title` varchar(40) DEFAULT '',
+  `body` text,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `email` varchar(128) NOT NULL,
+  `activkey` varchar(128) NOT NULL,
+  `createtime` int(10) NOT NULL,
+  `lastvisit` int(10) NOT NULL,
+  `status` int(1) NOT NULL,
+  `org` int(11) NOT NULL,
+  `sender` varchar(20) NOT NULL,
+  `smsprefix` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `whitelist`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `whitelist` (
+  `fid` int(11) NOT NULL COMMENT 'filter.id',
+  `isdn` varchar(20) NOT NULL DEFAULT '' COMMENT 'Phone number',
+  PRIMARY KEY (`fid`,`isdn`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `worktime`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `worktime` (
+  `id` int(11) NOT NULL,
+  `start` time NOT NULL,
+  `end` time NOT NULL,
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `wsuser`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `wsuser` (
+  `id` int(11) NOT NULL,
+  `username` varchar(40) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL DEFAULT '',
+  `sender` varchar(40) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping routines for database 'yii_isms'
+--
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 FUNCTION `urldecode`(s VARCHAR(4096)) RETURNS varchar(4096) CHARSET utf8
+    DETERMINISTIC
+BEGIN
+       DECLARE c VARCHAR(4096) DEFAULT '';
+       DECLARE pointer INT DEFAULT 1;
+       DECLARE h CHAR(2);
+       DECLARE h1 CHAR(1);
+       DECLARE h2 CHAR(1);
+       DECLARE s2 VARCHAR(4096) DEFAULT '';
+
+       IF ISNULL(s) THEN
+          RETURN NULL;
+       ELSE
+       SET s2 = '';
+       WHILE pointer <= LENGTH(s) DO
+          SET c = MID(s,pointer,1);
+          IF c = '+' THEN
+             SET c = ' ';
+          ELSEIF c = '%' AND pointer + 2 <= LENGTH(s) THEN
+             SET h1 = LOWER(MID(s,pointer+1,1));
+             SET h2 = LOWER(MID(s,pointer+2,1));
+             IF (h1 BETWEEN '0' AND '9' OR h1 BETWEEN 'a' AND 'f')
+                 AND
+                 (h2 BETWEEN '0' AND '9' OR h2 BETWEEN 'a' AND 'f')
+                 THEN
+                   SET h = CONCAT(h1,h2);
+                   SET pointer = pointer + 2;
+                   SET c = CHAR(CONV(h,16,10));
+              END IF;
+          END IF;
+          SET s2 = CONCAT(s2,c);
+          SET pointer = pointer + 1;
+       END while;
+       END IF;
+       RETURN s2;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 FUNCTION `urlencode`(s VARCHAR(4096)) RETURNS varchar(4096) CHARSET utf8
+    DETERMINISTIC
+BEGIN
+       DECLARE c VARCHAR(4096) DEFAULT '';
+       DECLARE pointer INT DEFAULT 1;
+       DECLARE s2 VARCHAR(4096) DEFAULT '';
+
+       IF ISNULL(s) THEN
+           RETURN NULL;
+       ELSE
+       SET s2 = '';
+       WHILE pointer <= length(s) DO
+          SET c = MID(s,pointer,1);
+          IF c = ' ' THEN
+             SET c = '+';
+          ELSEIF NOT (ASCII(c) BETWEEN 48 AND 57 OR
+                ASCII(c) BETWEEN 65 AND 90 OR
+                ASCII(c) BETWEEN 97 AND 122) THEN
+             SET c = concat("%",LPAD(CONV(ASCII(c),10,16),2,0));
+          END IF;
+          SET s2 = CONCAT(s2,c);
+          SET pointer = pointer + 1;
+       END while;
+       END IF;
+       RETURN s2;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `FixSmsBlock`()
+BEGIN
+  DECLARE bDone, param1 INT;
+  DECLARE curs CURSOR FOR SELECT DISTINCT cid FROM cporder;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET bDone = 1;
+
+  OPEN curs;
+  SET bDone = 0;
+  REPEAT
+    FETCH curs INTO param1;
+SELECT param1;
+  SELECT COUNT(*) INTO @sent FROM sent_sms WHERE `campaign_id`=param1;
+  SELECT COUNT(*) INTO @send FROM send_sms WHERE `campaign_id`=param1;
+  SELECT SUM(CEIL(CHAR_LENGTH(URLDECODE(msgdata))/160)) INTO @blocksent FROM sent_sms WHERE `campaign_id` = param1;
+  SELECT SUM(CEIL(CHAR_LENGTH(URLDECODE(msgdata))/160)) INTO @blocksend FROM send_sms WHERE `campaign_id` = param1;
+  SET @send = IFNULL(@send, 0);
+   SET @sent = IFNULL(@sent, 0);
+   SET @blocksend = IFNULL(@blocksend, 0);
+   SET @blocksent = IFNULL(@blocksent, 0);
+
+  SET @smsimport = @send + @sent;
+  SET @blockimport = @blocksend + @blocksent;
+
+  SELECT param1, @smsimport, @blockimport, @send, @blocksend, @sent, @blocksent;
+
+  UPDATE campaign SET `smsimport` = @smsimport,`blockimport`= @blockimport,`send` = @send,`sent` = @sent,`blocksend` = @blocksend,`blocksent`= @blocksent WHERE `id`=param1;
+  UPDATE cporder SET `smsblock` = @blockimport WHERE `cid`=param1;
+  SELECT * FROM cporder WHERE `cid`=param1;
+  SELECT id, title, smsimport, blockimport, send, blocksend, sent, blocksent FROM campaign WHERE `id`=param1;
+  UNTIL bDone END REPEAT;
+  CLOSE curs;
+  END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `FixSmsBlockAll`()
+BEGIN
+  DECLARE bDone, param1 INT;
+  DECLARE curs CURSOR FOR SELECT DISTINCT cid FROM cporder WHERE cid > 310 ORDER BY cid ASC;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET bDone = 1;
+
+  OPEN curs;
+  SET bDone = 0;
+  REPEAT
+    FETCH curs INTO param1;
+SELECT param1;
+  CALL FixSmsBlockSingle(param1);
+  UNTIL bDone END REPEAT;
+  CLOSE curs;
+  END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `FixSmsBlockRatio`()
+BEGIN
+  DECLARE bDone, param1, param2, param3 INT;
+  DECLARE curs CURSOR FOR SELECT DISTINCT campaign_id FROM sent_sms WHERE coding=2 AND campaign_id > 0 ORDER BY campaign_id ASC;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET bDone = 1;
+
+  OPEN curs;
+  SET bDone = 0;
+  REPEAT
+    FETCH curs INTO param1;
+SELECT param1;
+  SELECT CEIL(CHAR_LENGTH(template/160)) INTO param2 FROM campaign WHERE id=param1;
+
+  UPDATE campaign SET blockimport=smsimport * param2, blocksent=sent * param2, blocksend = send * param2 WHERE id=param1;
+  SELECT id, title, param2, smsimport, blockimport, send, blocksend, sent, blocksent FROM campaign WHERE id=param1;
+
+  SELECT blockimport INTO param3 FROM campaign WHERE id=param1;
+UPDATE cporder SET smsblock=param3 WHERE cid=param1;
+
+SELECT * FROM cporder WHERE cid=param1;
+  UNTIL bDone END REPEAT;
+  CLOSE curs;
+  END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `FixSmsBlockSingle`(IN param1 INT(9))
+BEGIN
+  SELECT COUNT(*) INTO @sent FROM sent_sms WHERE `campaign_id`=param1;
+  SELECT COUNT(*) INTO @send FROM send_sms WHERE `campaign_id`=param1;
+  SELECT SUM(CEIL(CHAR_LENGTH(URLDECODE(msgdata))/160)) INTO @blocksent FROM sent_sms WHERE `campaign_id` = param1;
+  SELECT SUM(CEIL(CHAR_LENGTH(URLDECODE(msgdata))/160)) INTO @blocksend FROM send_sms WHERE `campaign_id` = param1;
+  SET @send = IFNULL(@send, 0);
+   SET @sent = IFNULL(@sent, 0);
+   SET @blocksend = IFNULL(@blocksend, 0);
+   SET @blocksent = IFNULL(@blocksent, 0);
+
+  SET @smsimport = @send + @sent;
+  SET @blockimport = @blocksend + @blocksent;
+
+  SELECT param1, @smsimport, @blockimport, @send, @blocksend, @sent, @blocksent;
+
+  UPDATE campaign SET `smsimport` = @smsimport,`blockimport`= @blockimport,`send` = @send,`sent` = @sent,`blocksend` = @blocksend,`blocksent`= @blocksent WHERE `id`=param1;
+  UPDATE cporder SET `smsblock` = @blockimport WHERE `cid`=param1;
+  SELECT * FROM cporder WHERE `cid`=param1;
+  SELECT id, title, smsimport, blockimport, send, blocksend, sent, blocksent FROM campaign WHERE `id`=param1;
+  END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2014-05-06 13:42:12
