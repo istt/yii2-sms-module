@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use istt\sms\models\Mailbox;
 
 /**
  * @var yii\web\View $this
@@ -20,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'option')->textInput(['maxlength' => 255]) ?>
+    <?= $form->field($model, 'option')->checkBoxList(Mailbox::optionOption()) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('sms', 'Create') : Yii::t('sms', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

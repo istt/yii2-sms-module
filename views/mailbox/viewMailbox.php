@@ -8,15 +8,13 @@ use yii\widgets\DetailView;
  * @var istt\sms\models\Mailbox $model
  */
 
-$this->title = $model->id;
+$this->title = $model->email;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('sms', 'Mailboxes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="mailbox-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
+    <p class="pull-right">
         <?= Html::a(Yii::t('sms', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('sms', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
@@ -26,15 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
+    <h1><small><?= Yii::t('sms', 'Mailbox') ?></small> <?= Html::encode($this->title) ?></h1>
+
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'hostname',
             'email:email',
             'password',
-            'option',
+            ['attribute' => 'option', 'value' => implode('/', $model->option)],
         ],
     ]) ?>
 
