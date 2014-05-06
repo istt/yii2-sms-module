@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use istt\sms\models\Filter;
 
 /**
  * @var yii\web\View $this
@@ -14,7 +15,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'fid')->textInput() ?>
+    <?= $form->field($model, 'fid')->dropDownList(Filter::options()) ?>
 
     <?= $form->field($model, 'isdn')->textInput(['maxlength' => 20]) ?>
 

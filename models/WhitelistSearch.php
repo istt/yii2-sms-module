@@ -32,7 +32,10 @@ class WhitelistSearch extends Whitelist
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+        	'totalCount' => 100,
         ]);
+
+        $query->with('filter');
 
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;

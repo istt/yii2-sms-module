@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use istt\sms\models\Filter;
 
 /**
  * @var yii\web\View $this
@@ -30,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'fid',
+            ['attribute' => 'fid', 'filter' => Filter::options(), 'value' => function($data){ return $data->filter->title; }],
             'isdn',
 
             ['class' => 'yii\grid\ActionColumn'],

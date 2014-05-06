@@ -37,7 +37,8 @@ class Blacklist extends \yii\db\ActiveRecord
         return [
             [['fid'], 'required'],
             [['fid'], 'integer'],
-            [['isdn'], 'string', 'max' => 20]
+            [['isdn'], 'string', 'max' => 20],
+            [['isdn'], 'unique', 'targetAttribute' => ['fid', 'isdn']],
         ];
     }
 
@@ -47,8 +48,8 @@ class Blacklist extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'fid' => Yii::t('sms', 'filter.id'),
-            'isdn' => Yii::t('sms', 'Phone number of the customer'),
+            'fid' => Yii::t('sms', 'Filter'),
+            'isdn' => Yii::t('sms', 'ISDN'),
 
         ];
     }
