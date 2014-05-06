@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 
 /**
  * @var yii\web\View $this
- * @var vendor\istt\sms\models\BlacklistSearch $model
+ * @var istt\sms\models\BlacklistSearch $model
  * @var yii\widgets\ActiveForm $form
  */
 ?>

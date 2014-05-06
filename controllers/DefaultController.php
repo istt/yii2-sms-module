@@ -1,6 +1,6 @@
 <?php
 
-namespace vendor\istt\sms\controllers;
+namespace istt\sms\controllers;
 
 use yii\web\Controller;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace vendor\istt\sms\controllers;
+namespace istt\sms\controllers;
 
 use Yii;
-use vendor\istt\sms\models\Whitelist;
-use vendor\istt\sms\models\WhitelistSearch;
+use istt\sms\models\Whitelist;
+use istt\sms\models\WhitelistSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

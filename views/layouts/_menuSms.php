@@ -18,5 +18,6 @@ return [
 		['label' => Yii::t('sms', 'Filter'), 'url'=>['/sms/filter/index']],
 		['label' => Yii::t('sms', 'Blacklist'), 'url'=>['/sms/blacklist']],
 		['label' => Yii::t('sms', 'Whitelist'), 'url'=>['/sms/whitelist']],
+		['label' => Yii::t('sms', 'User'), 'url'=>['/sms/user']],
 	]]
 ];

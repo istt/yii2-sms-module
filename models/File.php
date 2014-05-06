@@ -1,6 +1,6 @@
 <?php
 
-namespace vendor\istt\sms\models;
+namespace istt\sms\models;
 
 use Yii;
 

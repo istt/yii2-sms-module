@@ -1,9 +1,9 @@
 <?php
 
-namespace vendor\istt\sms\models;
+namespace istt\sms\models;
 
 use Yii;
-use vendor\istt\fbads\models\Campaign;
+use istt\fbads\models\Campaign;
 
 /**
  * This is the model class for table "ftpsetting".

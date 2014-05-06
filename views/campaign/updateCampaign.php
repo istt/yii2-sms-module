@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /**
  * @var yii\web\View $this
- * @var vendor\istt\sms\models\Campaign $model
+ * @var istt\sms\models\Campaign $model
  */
 
 $this->title = Yii::t('sms', 'Update {modelClass}: ', [

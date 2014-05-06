@@ -6,7 +6,7 @@ use yii\grid\GridView;
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var vendor\istt\sms\models\FileSearch $searchModel
+ * @var istt\sms\models\FileSearch $searchModel
  */
 
 $this->title = Yii::t('sms', 'Files');

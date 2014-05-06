@@ -1,10 +1,10 @@
 <?php
 
-namespace vendor\istt\sms\controllers;
+namespace istt\sms\controllers;
 
 use Yii;
-use vendor\istt\sms\models\Worktime;
-use vendor\istt\sms\models\WorktimeSearch;
+use istt\sms\models\Worktime;
+use istt\sms\models\WorktimeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

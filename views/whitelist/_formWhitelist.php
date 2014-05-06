@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 
 /**
  * @var yii\web\View $this
- * @var vendor\istt\sms\models\Whitelist $model
+ * @var istt\sms\models\Whitelist $model
  * @var yii\widgets\ActiveForm $form
  */
 ?>

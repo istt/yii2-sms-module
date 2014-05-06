@@ -1,10 +1,10 @@
 <?php
 
-namespace vendor\istt\sms\controllers;
+namespace istt\sms\controllers;
 
 use Yii;
-use vendor\istt\sms\models\Mailbox;
-use vendor\istt\sms\models\MailboxSearch;
+use istt\sms\models\Mailbox;
+use istt\sms\models\MailboxSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

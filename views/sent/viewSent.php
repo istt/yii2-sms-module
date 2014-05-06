@@ -5,7 +5,7 @@ use yii\widgets\DetailView;
 
 /**
  * @var yii\web\View $this
- * @var vendor\istt\sms\models\Sent $model
+ * @var istt\sms\models\Sent $model
  */
 
 $this->title = $model->receiver;

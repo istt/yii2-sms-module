@@ -6,7 +6,7 @@ use yii\grid\GridView;
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var vendor\istt\sms\models\FtpSearch $searchModel
+ * @var istt\sms\models\FtpSearch $searchModel
  */
 
 $this->title = Yii::t('sms', 'Ftps');

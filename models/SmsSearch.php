@@ -1,14 +1,14 @@
 <?php
 
-namespace vendor\istt\sms\models;
+namespace istt\sms\models;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use vendor\istt\sms\models\Sms;
+use istt\sms\models\Sms;
 
 /**
- * SmsSearch represents the model behind the search form about `vendor\istt\sms\models\Sms`.
+ * SmsSearch represents the model behind the search form about `istt\sms\models\Sms`.
  */
 class SmsSearch extends Sms
 {
