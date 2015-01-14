@@ -1,13 +1,13 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use kartik\widgets\ActiveForm;
 use istt\sms\models\Mailbox;
 
 /**
  * @var yii\web\View $this
  * @var istt\sms\models\Mailbox $model
- * @var yii\widgets\ActiveForm $form
+ * @var kartik\widgets\ActiveForm $form
  */
 ?>
 

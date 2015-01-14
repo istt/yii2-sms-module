@@ -1,12 +1,12 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use kartik\widgets\ActiveForm;
 
 /**
  * @var yii\web\View $this
  * @var istt\sms\models\BlacklistSearch $model
- * @var yii\widgets\ActiveForm $form
+ * @var kartik\widgets\ActiveForm $form
  */
 ?>
 

@@ -14,7 +14,7 @@ class SmsModule extends \yii\base\Module
         	$this->controllerNamespace = 'istt\sms\commands';
         }
 
-        \Yii::$app->getI18n()->translations['*'] = [
+        \Yii::$app->getI18n()->translations['sms'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'basePath' => __DIR__ . '/messages',
         ];

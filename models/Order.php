@@ -19,6 +19,8 @@ use Yii;
    */
 class Order extends \yii\db\ActiveRecord
 {
+	const ENABLE = 1;
+	const DISABLE = 0;
     /**
      * @inheritdoc
      */

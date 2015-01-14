@@ -2,7 +2,7 @@
 	"name": "istt/yii2-sms-module",
 	"description": "A module for Yii2",
 	"keywords": ["istt", "ndtrung", "yii", "sms"],
-	"type": "yii2-module",
+	"type": "yii2-extension",
 	"license": "MIT",
 	"authors": [
 		{
@@ -12,11 +12,15 @@
 		}
 	],
 	"require": {
-		"yiisoft/yii2": "*"
+		"yiisoft/yii2": "*",
+		"kartik-v/yii2-widgets": "*"
 	},
 	"autoload": {
 		"psr-4": {
 			"istt\\sms\\": ""
 		}
-	}
+	},
+	"extra": {
+        "bootstrap": "istt\\sms\\Bootstrap"
+    }
 }
