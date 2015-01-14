@@ -28,4 +28,19 @@ class CampaignController extends Controller
 		echo $message . "\n";
 	}
 
+	/**
+	 * This command import a specific campaign into the database
+	 * @param number $id
+	 */
+	public function actionImport($id = 0){
+
+	}
+
+	/**
+	 * This command switch all command that are in their running time
+	 */
+	public function actionActive(){
+
+	}
+
 }

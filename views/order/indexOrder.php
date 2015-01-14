@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'updatetime:datetime',
             'status',
             'expired',
-            'smscount:number',
+            'smscount:integer',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

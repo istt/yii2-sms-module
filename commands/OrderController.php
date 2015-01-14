@@ -21,7 +21,8 @@ class OrderController extends Controller
 {
 
 	/**
-	 * Generate dummy data for order
+	 * Generate a specified number of order into database
+	 * @param number $num
 	 */
 	public function actionGenerate($num = 10){
 		$lastOrder = Order::find()->orderBy(['id' => SORT_DESC])->one();
@@ -34,10 +35,14 @@ class OrderController extends Controller
 					'description' => 'Dummy Description for Order #' . $i,
 					'userid' => 1,
 					'status' => Order::ENABLE,
-					'expired' => date('%Y-%m-%d', now() + rand(10, 30) * 24 * 60 * 60),
+					'expired' => date('%Y-%m-%d', time() + rand(10, 30) * 24 * 60 * 60),
 					'smscount' => rand(1000, 9999)
 			]);
-			$success += ($newOrder->save())?1:0;
+			if ($newOrder->save()){
+				$success += 1;
+			} else {
+				var_dump($newOrder->errors);
+			}
 		}
 		echo "Successfully create $success order";
 	}

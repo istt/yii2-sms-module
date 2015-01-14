@@ -3,6 +3,8 @@
 namespace istt\sms\models;
 
 use Yii;
+use yii\base\Behavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "smsorder".
@@ -43,9 +45,9 @@ class Order extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'userid', 'createtime', 'updatetime', 'status', 'expired', 'smscount'], 'required'],
+            [['title', 'description', 'userid', 'status', 'expired', 'smscount'], 'required'],
             [['description'], 'string'],
-            [['userid', 'createtime', 'updatetime', 'status', 'smscount'], 'integer'],
+            [['userid', 'status', 'smscount'], 'integer'],
             [['expired'], 'safe'],
             [['title'], 'string', 'max' => 255]
         ];
@@ -67,5 +69,16 @@ class Order extends \yii\db\ActiveRecord
             'expired' => Yii::t('sms', 'Expired'),
             'smscount' => Yii::t('sms', 'Smscount'),
         ];
+    }
+
+    public function behaviors(){
+    	return [
+    			'timestamp' => [
+    					'class' => TimestampBehavior::className(),
+    					'createdAtAttribute' => 'createtime',
+    					'updatedAtAttribute' => 'updatetime',
+    			]
+
+    	];
     }
 }

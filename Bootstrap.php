@@ -4,6 +4,7 @@ namespace istt\sms;
 use yii\base\BootstrapInterface;
 use yii\web\GroupUrlRule;
 use yii\console\Application as ConsoleApplication;
+use yii\base\Module;
 
 class Bootstrap implements BootstrapInterface
 {
