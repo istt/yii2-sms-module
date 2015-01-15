@@ -32,13 +32,23 @@ class Worktime extends \yii\db\ActiveRecord
     }
 
     /**
+     * Override loadDefaultValues
+     * @see \yii\db\ActiveRecord::loadDefaultValues()
+     */
+    public function loadDefaultValues($skipIfSet = true){
+    	$this->start = date('H:i');
+    	$this->end = date('H:i', time() + 180);
+    	return parent::loadDefaultValues($skipIfSet);
+    }
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
             [['start', 'end'], 'required'],
-            [['start', 'end'], 'safe']
+            [['start', 'end'], 'date', 'format' => 'HHmm']
         ];
     }
 
