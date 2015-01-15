@@ -39,7 +39,9 @@ class Cpfilter extends \yii\db\ActiveRecord
     {
         return [
             [['cid', 'fid', 'type'], 'required'],
-            [['cid', 'fid', 'type'], 'integer']
+            [['cid', 'fid', 'type'], 'integer'],
+        		// Extra rules
+        		[['fid'], 'unique', 'targetAttribute' => ['cid', 'fid', 'type']],
         ];
     }
 

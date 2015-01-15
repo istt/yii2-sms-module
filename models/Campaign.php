@@ -56,8 +56,8 @@ use Yii;
  */
 class Campaign extends \yii\db\ActiveRecord
 {
-	public $filterBlacklistIds = [];
-	public $filterWhitelistIds = [];
+	public $filterBlacklistIds;
+	public $filterWhitelistIds;
     /**
      * @inheritdoc
      */
@@ -76,14 +76,38 @@ class Campaign extends \yii\db\ActiveRecord
 
     public function init(){
     	parent::init();
+    }
+
+    public function afterFind(){
+    	// Populate the list of Filter IDs into the model...
+    	$this->filterBlacklistIds = $this->filterWhitelistIds = [];
     	foreach ($this->getCpfilter()->all() as $cpfilter){
-    		if ($cpfilter instanceof Cpfilter){
-    			if ($cpfilter->type){
-	    			$this->filterWhitelistIds[] = $cpfilter->fid;
-    			} else {
-	    			$this->filterBlacklistIds[] = $cpfilter->fid;
-    			}
+    		if ($cpfilter->type){
+    			$this->filterWhitelistIds[] = $cpfilter->fid;
+    		} else {
+    			$this->filterBlacklistIds[] = $cpfilter->fid;
     		}
+    	}
+    	parent::afterFind();
+    }
+
+    public function afterSave($insert, $changedAttributes){
+    	parent::afterSave($insert, $changedAttributes);
+    	// Save all related filterBlacklist
+    	foreach ($this->filterBlacklistIds as $fid){
+    		$cpfilter = new Cpfilter();
+    		$cpfilter->cid = $this->primaryKey;
+    		$cpfilter->fid = $fid;
+    		$cpfilter->type = 0;
+    		$cpfilter->save();
+    	}
+    	// Save all related filterWhitelist
+    	foreach ($this->filterWhitelistIds as $fid){
+    		$cpfilter = new Cpfilter();
+    		$cpfilter->cid = $this->primaryKey;
+    		$cpfilter->fid = $fid;
+    		$cpfilter->type = 1;
+    		$cpfilter->save();
     	}
     }
 
