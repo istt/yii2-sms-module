@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
+use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
+use istt\sms\models\Ftp;
 
 /**
  * @var yii\web\View $this
@@ -14,27 +17,40 @@ use kartik\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'ftpblack')->textInput() ?>
+    <?= $form->field($model, 'title', ['addon' => ['prepend' => ['content' => '<i class="glyphicon glyphicon-star"></i>']]])->textInput(['maxlength' => 20]) ?>
 
-    <?= $form->field($model, 'ftpwhite')->textInput() ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 6])?>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => 20]) ?>
+    <div class="row">
+	<div class="col-sm-6">
+	    <?= $form->field($model, 'reply_refuse')->textarea(['rows' => 3]) ?>
+    	<?= $form->field($model, 'reply_refuse_dup')->textarea(['rows' => 3]) ?>
+	    <?= $form->field($model, 'ftpblack')->widget(Select2::className(), [
+	    		'data' => ($ftpList = [null => Yii::t('sms', '-- Select FTP Connection --')] + ArrayHelper::map(Ftp::find()->all(), 'id', 'title'))
+	    ]) ?>
+	    <?= $form->field($model, 'ftpblackfile')->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'reply_refuse')->textInput(['maxlength' => 256]) ?>
+	</div>
+	<div class="col-sm-6">
+	    <?= $form->field($model, 'reply_accept')->textarea(['rows' => 3]) ?>
+	    <?= $form->field($model, 'reply_accept_dup')->textarea(['rows' => 3]) ?>
+	    <?= $form->field($model, 'ftpwhite')->widget(Select2::className(), [
+	    		'data' => $ftpList
+	    ]) ?>
+	    <?= $form->field($model, 'ftpwhitefile')->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'reply_accept')->textInput(['maxlength' => 256]) ?>
+	</div>
+</div>
 
-    <?= $form->field($model, 'reply_false_syntax')->textInput(['maxlength' => 256]) ?>
 
-    <?= $form->field($model, 'description')->textInput(['maxlength' => 256]) ?>
 
-    <?= $form->field($model, 'reply_accept_dup')->textInput(['maxlength' => 256]) ?>
 
-    <?= $form->field($model, 'reply_refuse_dup')->textInput(['maxlength' => 256]) ?>
 
-    <?= $form->field($model, 'ftpblackfile')->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'ftpwhitefile')->textInput(['maxlength' => 255]) ?>
+
+
+
+
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('sms', 'Create') : Yii::t('sms', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\data\ActiveDataProvider;
+use yii\grid\GridView;
 
 /**
  * @var yii\web\View $this
@@ -74,3 +76,9 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
 </div>
+
+
+<?php $cpfilters = new ActiveDataProvider([
+		'query' => $model->getCpfilter()
+])?>
+<?= GridView::widget([ 'dataProvider' => $cpfilters ])?>

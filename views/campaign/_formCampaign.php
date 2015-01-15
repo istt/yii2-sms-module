@@ -6,6 +6,8 @@ use yii\bootstrap\Collapse;
 use kartik\widgets\Select2;
 use istt\sms\models\Filter;
 use yii\helpers\VarDumper;
+use yii\helpers\ArrayHelper;
+use istt\sms\models\Ftp;
 
 /**
  * @var yii\web\View $this
@@ -77,11 +79,13 @@ use yii\helpers\VarDumper;
 
     <?php $this->beginBlock('data'); // Data retrieved from FTP server or file upload?>
 
-    	<?= $form->field($model, 'ftpserver')->textInput() ?>
+    	<?= $form->field($model, 'ftpserver')->widget(Select2::className(), [
+    			'data' => ($fptList = [null => Yii::t('sms', '-- Select FTP Connection --')] + ArrayHelper::map(Ftp::find()->all(), 'id', 'title'))
+    	]) ?>
 
     	<?= $form->field($model, 'filterBlacklistIds')->widget(Select2::className(), [
     			'options'=> ['multiple' => true],
-    			'data' => Filter::options(),
+    			'data' => ($filterList = ArrayHelper::map(Filter::find()->all(), 'id', 'title'))
     	])?>
     	<?= $form->field($model, 'filterWhitelistIds')->widget(Select2::className(), [
     			'options'=> ['multiple' => true],
@@ -151,5 +155,4 @@ use yii\helpers\VarDumper;
 </div>
 
 
-<?= VarDumper::dump($model, 10, true)?>
-<?= VarDumper::dump($model->getCpfilter()->all(), 10, true)?>
+<?= VarDumper::dump($model, 2, true)?>
