@@ -3,6 +3,7 @@
 namespace istt\sms\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "filter".
@@ -100,5 +101,12 @@ class Filter extends \yii\db\ActiveRecord
     public function behaviors(){
     	return [
     	];
+    }
+
+    /**
+     * Provide a list of options
+     */
+    public static function options($condition = null){
+    	return ArrayHelper::map(self::find()->all(), 'id', 'title');
     }
 }

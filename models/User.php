@@ -3,6 +3,7 @@
 namespace istt\sms\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "users".
@@ -78,5 +79,9 @@ class User extends \yii\db\ActiveRecord
     public function behaviors(){
     	return [
     	];
+    }
+
+    public static function options($condition = null){
+    	return ArrayHelper::map(self::find()->all(), 'id','username');
     }
 }

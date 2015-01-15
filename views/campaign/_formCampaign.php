@@ -3,6 +3,9 @@
 use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
 use yii\bootstrap\Collapse;
+use kartik\widgets\Select2;
+use istt\sms\models\Filter;
+use yii\helpers\VarDumper;
 
 /**
  * @var yii\web\View $this
@@ -76,6 +79,15 @@ use yii\bootstrap\Collapse;
 
     	<?= $form->field($model, 'ftpserver')->textInput() ?>
 
+    	<?= $form->field($model, 'filterBlacklistIds')->widget(Select2::className(), [
+    			'options'=> ['multiple' => true],
+    			'data' => Filter::options(),
+    	])?>
+    	<?= $form->field($model, 'filterWhitelistIds')->widget(Select2::className(), [
+    			'options'=> ['multiple' => true],
+    			'data' => Filter::options(),
+    	])?>
+
     <?php $this->endBlock(); ?>
 
 
@@ -137,3 +149,7 @@ use yii\bootstrap\Collapse;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+
+<?= VarDumper::dump($model, 10, true)?>
+<?= VarDumper::dump($model->getCpfilter()->all(), 10, true)?>

@@ -56,6 +56,8 @@ use Yii;
  */
 class Campaign extends \yii\db\ActiveRecord
 {
+	public $filterBlacklistIds = [];
+	public $filterWhitelistIds = [];
     /**
      * @inheritdoc
      */
@@ -72,6 +74,19 @@ class Campaign extends \yii\db\ActiveRecord
         return ($db = Yii::$app->get('smsDb'))?$db:Yii::$app->db;
     }
 
+    public function init(){
+    	parent::init();
+    	foreach ($this->getCpfilter()->all() as $cpfilter){
+    		if ($cpfilter instanceof Cpfilter){
+    			if ($cpfilter->type){
+	    			$this->filterWhitelistIds[] = $cpfilter->fid;
+    			} else {
+	    			$this->filterBlacklistIds[] = $cpfilter->fid;
+    			}
+    		}
+    	}
+    }
+
     /**
      * @inheritdoc
      */
@@ -86,7 +101,9 @@ class Campaign extends \yii\db\ActiveRecord
             [['codename', 'sender'], 'string', 'max' => 20],
             [['datasender'], 'string', 'max' => 80],
             [['cpworkday'], 'string', 'max' => 10],
-            [['esubject', 'eattachment'], 'string', 'max' => 255]
+            [['esubject', 'eattachment'], 'string', 'max' => 255],
+        		// Extra attributes
+        		[['filterBlacklistIds', 'filterWhitelistIds'], 'safe']
         ];
     }
 

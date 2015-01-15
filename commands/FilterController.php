@@ -11,6 +11,7 @@ namespace istt\sms\commands;
 
 use Yii;
 use yii\console\Controller;
+use istt\sms\models\Filter;
 /**
  * Task runner command for development.
  * @package console\controllers
@@ -26,6 +27,26 @@ class FilterController extends Controller
 	public function actionIndex($message = 'hello world')
 	{
 		echo $message . "\n";
+	}
+
+	public function actionDummy($cnt = 10){
+		$lastFilter = Filter::find()->orderBy(['id' => SORT_DESC])->one();
+		$maxId = 0;
+		if ($lastFilter){
+			$maxId += $lastFilter->id;
+		}
+		$success = 0;
+		for ($i = $maxId; $i < $maxId + $cnt; $i++){
+			$filter = new Filter();
+			$filter->title= "Dummy Filter #" . $i;
+			$filter->description = "A short description for dummy filter #" . $i;
+			if ($filter->save()){
+				$success++;
+			} else {
+				var_dump($filter->errors);
+			}
+		}
+		echo "Successfully create $success filter";
 	}
 
 

@@ -15,14 +15,22 @@ use istt\sms\models\Mailbox;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'hostname')->textInput(['maxlength' => 40]) ?>
+    <div class="row">
+		<div class="col-sm-4">
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
+		    <?= $form->field($model, 'hostname', ['addon' => ['prepend' => ['content' => '<i class="glyphicon glyphicon-hdd"></i>']]])->textInput(['maxlength' => 40]) ?>
 
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255]) ?>
+		    <?= $form->field($model, 'email', ['addon' => ['prepend' => ['content' => '<i class="glyphicon glyphicon-envelope"></i>']]])->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'option')->checkBoxList(Mailbox::optionOption()) ?>
+		    <?= $form->field($model, 'password', ['addon' => ['prepend' => ['content' => '<i class="glyphicon glyphicon-lock"></i>']]])->passwordInput(['maxlength' => 255]) ?>
 
+		</div>
+		<div class="col-sm-8">
+
+	    	<?= $form->field($model, 'option')->checkBoxList(Mailbox::optionOption()) ?>
+
+		</div>
+	</div>
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('sms', 'Create') : Yii::t('sms', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

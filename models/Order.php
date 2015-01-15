@@ -49,7 +49,9 @@ class Order extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['userid', 'status', 'smscount'], 'integer'],
             [['expired'], 'safe'],
-            [['title'], 'string', 'max' => 255]
+            [['title'], 'string', 'max' => 255],
+        		// Extra rules
+        		[['expired'], 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
