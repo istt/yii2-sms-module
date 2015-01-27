@@ -8,6 +8,7 @@ use istt\sms\models\CampaignSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use istt\sms\models\Cpfilter;
 
 /**
  * CampaignController implements the CRUD actions for Campaign model.
@@ -63,8 +64,35 @@ class CampaignController extends Controller
         $model = new Campaign;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        	/* Save related blacklist & whitelist filters  */
+        	Cpfilter::deleteAll(['cid' => $model->primaryKey]);
+        	foreach ($model->filterBlacklistIds as $fid){
+        		$cpfilter = new Cpfilter();
+        		$cpfilter->cid = $model->primaryKey;
+        		$cpfilter->fid = $fid;
+        		$cpfilter->type = 0;
+        		$cpfilter->save();
+        	}
+        	foreach ($model->filterWhitelistIds as $fid){
+        		$cpfilter = new Cpfilter();
+        		$cpfilter->cid = $model->primaryKey;
+        		$cpfilter->fid = $fid;
+        		$cpfilter->type = 1;
+        		$cpfilter->save();
+        	}
+        	/* TODO: Save uploaded files  */
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+        	/* Populate the list of Filter IDs into the model... */
+        	$model->filterBlacklistIds = $model->filterWhitelistIds = [];
+        	foreach ($model->getCpfilter()->all() as $cpfilter){
+        		if ($cpfilter->type){
+        			$model->filterWhitelistIds[] = $cpfilter->fid;
+        		} else {
+        			$model->filterBlacklistIds[] = $cpfilter->fid;
+        		}
+        	}
             return $this->render('createCampaign', [
                 'model' => $model,
             ]);

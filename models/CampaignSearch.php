@@ -15,8 +15,10 @@ class CampaignSearch extends Campaign
     public function rules()
     {
         return [
-            [['id', 'createtime', 'updatetime', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'orderid', 'exported'], 'integer'],
+            [['id', 'created_at', 'updated_at', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'orderid', 'exported'], 'integer'],
             [['title', 'description', 'codename', 'request_date', 'request_owner', 'datasender', 'tosubscriber', 'start', 'end', 'sender', 'template', 'cpworkday', 'esubject', 'eattachment'], 'safe'],
+        		// Extra complex properties
+        		[['gridTitle', 'gridStatus', 'gridTime'], 'safe']
         ];
     }
 
@@ -40,8 +42,8 @@ class CampaignSearch extends Campaign
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'createtime' => $this->createtime,
-            'updatetime' => $this->updatetime,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'request_date' => $this->request_date,
             'start' => $this->start,
             'end' => $this->end,
@@ -81,6 +83,16 @@ class CampaignSearch extends Campaign
             ->andFilterWhere(['like', 'cpworkday', $this->cpworkday])
             ->andFilterWhere(['like', 'esubject', $this->esubject])
             ->andFilterWhere(['like', 'eattachment', $this->eattachment]);
+
+        // Extra properties for search
+        if ($this->gridTitle){
+        	$query->addFilterWhere(['or',
+        			['like', 'title', $this->gridTitle],
+        			['like', 'description', $this->gridTitle],
+        			['like', 'codename', $this->gridTitle],
+        			['like', 'template', $this->gridTitle],
+        	]);
+        }
 
         return $dataProvider;
     }

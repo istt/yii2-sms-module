@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Html;
+?>
 <div class="sms-default-index">
     <h1><?= $this->context->action->uniqueId ?></h1>
     <p>
@@ -10,3 +13,10 @@
         <code><?= __FILE__ ?></code>
     </p>
 </div>
+
+
+<?= Html::a('Campaign', ['campaign/index']); ?>
+<?= Html::a('New Campaign', ['campaign/create']); ?>
+<?= Html::a('Filter', ['filter/index']); ?>
+<?= Html::a('Worktime', ['worktime/index']); ?>
+<?= Html::a('Campaign', ['campaign/index']); ?>

@@ -23,6 +23,10 @@ class Order extends \yii\db\ActiveRecord
 {
 	const ENABLE = 1;
 	const DISABLE = 0;
+
+	const TYPE_ALL = 0;
+	const TYPE_LIMITED = 1;
+	const TYPE_CUSTOM = 2;
     /**
      * @inheritdoc
      */
@@ -82,5 +86,22 @@ class Order extends \yii\db\ActiveRecord
     			]
 
     	];
+    }
+
+    /**
+     * Calculate SMS Left
+     * @return number|NULL
+     */
+    public function getSmsleft(){
+    	if ($this->getPrimaryKey())
+    		return $this->smscount - self::getDb()->createCommand("
+    				SELECT SUM(`smsblock`) FROM cporder
+    					LEFT JOIN campaign ON cporder.cid = campaign.id
+    					WHERE
+    						((campaign.status=1 AND campaign.approved=1)
+    						OR campaign.finished=1)
+    						AND cporder.oid=" . $this->getPrimaryKey())
+    		->queryScalar();
+    	else return NULL;
     }
 }

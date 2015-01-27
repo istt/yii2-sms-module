@@ -10,8 +10,8 @@ use Yii;
  * @property integer $id
    * @property string $title
    * @property string $description
-   * @property integer $createtime
-   * @property integer $updatetime
+   * @property integer $created_at
+   * @property integer $updated_at
    * @property string $codename
    * @property string $request_date
    * @property string $request_owner
@@ -78,37 +78,22 @@ class Campaign extends \yii\db\ActiveRecord
     	parent::init();
     }
 
+    public $gridTitle;
+    public $gridStatus;
+    public $gridTime;
     public function afterFind(){
-    	// Populate the list of Filter IDs into the model...
-    	$this->filterBlacklistIds = $this->filterWhitelistIds = [];
-    	foreach ($this->getCpfilter()->all() as $cpfilter){
-    		if ($cpfilter->type){
-    			$this->filterWhitelistIds[] = $cpfilter->fid;
-    		} else {
-    			$this->filterBlacklistIds[] = $cpfilter->fid;
-    		}
-    	}
+    	/*  Calculate mixed attribute based of current attributes   */
+    	$this->gridTitle = Yii::t('sms', '<p><big>{title}</big> <small class="text text-info">{codename}</small></p><p>{description}</p><p><code>{template}</code></p>', $this->getAttributes());
+    	$this->gridStatus = Yii::t('sms', '{status} {ready} {active} {finished}', [
+    			'status' => $this->status?Yii::t('sms', '<span class="label label-primary">Enable</span>'):Yii::t('sms', '<span class="label label-warning">Disable</span>'),
+    			'ready' => ($this->ready == 0)?Yii::t('sms', '<span class="label label-default">Not Imported</span>'):(
+    					($this->ready == 1)?Yii::t('sms', '<span class="label label-info">Imported</span>'):
+    						Yii::t('sms', '<span class="label label-success">Filtered</span>')),
+    			'active' => $this->active?Yii::t('sms', '<span class="label label-primary">Active</span>'):Yii::t('sms', '<span class="label label-default">Pending</span>'),
+    			'finished' => $this->status?Yii::t('sms', '<span class="label label-success">Finished</span>'):Yii::t('sms', '<span class="label label-default">Not Finished</span>'),
+    	]);
+    	$this->gridTime = Yii::t('sms', '{start} - {end}', $this->getAttributes());
     	parent::afterFind();
-    }
-
-    public function afterSave($insert, $changedAttributes){
-    	parent::afterSave($insert, $changedAttributes);
-    	// Save all related filterBlacklist
-    	foreach ($this->filterBlacklistIds as $fid){
-    		$cpfilter = new Cpfilter();
-    		$cpfilter->cid = $this->primaryKey;
-    		$cpfilter->fid = $fid;
-    		$cpfilter->type = 0;
-    		$cpfilter->save();
-    	}
-    	// Save all related filterWhitelist
-    	foreach ($this->filterWhitelistIds as $fid){
-    		$cpfilter = new Cpfilter();
-    		$cpfilter->cid = $this->primaryKey;
-    		$cpfilter->fid = $fid;
-    		$cpfilter->type = 1;
-    		$cpfilter->save();
-    	}
     }
 
     /**
@@ -118,7 +103,7 @@ class Campaign extends \yii\db\ActiveRecord
     {
         return [
             [['description', 'tosubscriber', 'template'], 'string'],
-            [['createtime', 'updatetime', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'orderid', 'exported'], 'integer'],
+            [['created_at', 'updated_at', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'orderid', 'exported'], 'integer'],
             [['request_date', 'start', 'end'], 'safe'],
             [['active', 'isdncol', 'cpworkday'], 'required'],
             [['title', 'request_owner'], 'string', 'max' => 40],
@@ -140,8 +125,8 @@ class Campaign extends \yii\db\ActiveRecord
             'id' => Yii::t('sms', 'ID'),
             'title' => Yii::t('sms', 'Title'),
             'description' => Yii::t('sms', 'Description'),
-            'createtime' => Yii::t('sms', 'Createtime'),
-            'updatetime' => Yii::t('sms', 'Updatetime'),
+            'created_at' => Yii::t('sms', 'created_at'),
+            'updated_at' => Yii::t('sms', 'updated_at'),
             'codename' => Yii::t('sms', 'Codename'),
             'request_date' => Yii::t('sms', 'Request Date'),
             'request_owner' => Yii::t('sms', 'Request Owner'),
@@ -234,4 +219,122 @@ class Campaign extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Ftpfilename::className(), ['cid' => 'id']);
     }
+
+    const FINISHED_TRUE 	= 1;
+    const FINISHED_FALSE	= 0;
+    const STATUS_ENABLE = 1;
+    const STATUS_DISABLE = 0;
+    const APPROVED_TRUE = 1;
+    const APPROVED_FALSE= 0;
+    const LIMIT_EXCEEDED = 1;
+    const LIMIT_AVAILABLE = 0;
+    const READY_NOTYET	= 0;
+    const READY_IMPORT	= 1;
+    const READY_ALL		= 2;
+
+    /** Mandatory Read Only Attributes **/
+    public function getSent(){
+    	if ($this->getPrimaryKey()){
+    		if (! is_null($this->sent) AND ($this->finished == self::FINISHED_TRUE) AND ($this->sent != 0)) return $this->sent;
+    			$this->sent = self::getDb()->createCommand("
+    				SELECT COUNT(*) FROM sent_sms
+    					WHERE campaign_id = " . $this->getPrimaryKey() . " AND ((dlr IS NULL) OR (dlr = 1))"
+    				)->queryScalar();
+    			if ($this->finished == self::FINISHED_TRUE){
+    				$sent = intval($this->sent);
+    				self::getDb()->createCommand("
+    					UPDATE campaign SET sent=:sent WHERE id=:id ",
+    					[':sent' => $sent, ':id' => $this->primaryKey]
+    				)->execute();
+    			}
+    			return $this->sent;
+    	} else return NULL;
+    }
+
+    public function getBlocksent(){
+    	if ($this->getPrimaryKey()){
+    		if (! is_null($this->blocksent) AND ($this->finished == self::FINISHED_TRUE) AND ($this->blocksent != 0)) return $this->blocksent;
+    		if (strpos($this->template, '{') === FALSE){
+    			$this->blocksent = ceil(strlen($this->template) / 160) * $this->getSent();
+    		} else {
+    			$this->blocksent = self::getDb()->createCommand("SELECT SUM(CEIL(CHAR_LENGTH(msgdata)/160)) AS count FROM {{sent_sms}} WHERE campaign_id = :id AND ((dlr IS NULL) OR (dlr = 1))")->queryScalar([':id' => $this->primaryKey]);
+    		}
+    		if ($this->finished == self::FINISHED_TRUE){
+    			$sent = intval($this->blocksent);
+    			self::getDb()->createCommand('UPDATE campaign SET blocksent='.$sent.' WHERE id='.$this->getPrimaryKey())->execute();
+    			self::getDb()->createCommand('UPDATE cporder SET smsblock=0 WHERE cid='.$this->getPrimaryKey())->execute();
+    			$cporders = Cporder::find()->with('order')->where(['cid' => $this->getPrimaryKey()])->all();
+    			$quota = 0;
+    			foreach ($cporders as $o){
+    				$smsorder = $o->order;
+    				if ($smsorder instanceof Order){
+    					$quota += $smsorder->getSmsleft();
+    				}
+    			}
+    			if ($sent > $quota)
+    				$this->limit_exceeded = Campaign::LIMIT_EXCEEDED;
+    			else {
+    				foreach ($cporders as $o){
+    					$smsorder = $o->order;
+    					if (! ($smsorder instanceof Order))
+    						continue;
+    					$t = $smsorder->getSmsleft();	// so block SMS con lai cua don hang
+    					if ($t <= $sent){		// Don hang khong du?
+    						$o->smsblock = $t;
+    					} else {
+    						$o->smsblock = $sent;	// Don hang du?
+    					}
+    					$sent -= $o->smsblock;
+    					$o->save();
+    				}
+    				$this->limit_exceeded = Campaign::LIMIT_AVAILABLE;
+    			}
+    		}
+    		return $this->blocksent;
+    	}
+    	return NULL;
+    }
+
+
+    public function getSend(){
+    	if ($this->getPrimaryKey()){
+    		if (! is_null($this->send) AND ($this->finished == self::FINISHED_TRUE)) return $this->send;
+    		$this->send = self::getDb()->createCommand("SELECT COUNT(*) FROM send_sms WHERE campaign_id = " . $this->getPrimaryKey())
+    		->queryScalar();
+    		if ($this->finished == self::FINISHED_TRUE)
+    			self::getDb()->createCommand('UPDATE campaign SET send='.intval($this->send).' WHERE id='.$this->getPrimaryKey())->execute();
+    		return $this->send;
+    	}
+    	else return NULL;
+    }
+
+    public function getBlocksend(){
+    	if ($this->getPrimaryKey()){
+    		if (! is_null($this->blocksend) AND ($this->finished == self::FINISHED_TRUE))  return $this->blocksend;
+    		if (strpos($this->template, '{') === FALSE){
+    			$this->blocksend = ceil(strlen($this->template) / 160) * $this->getSend();
+    		} else {
+    			$this->blocksend = self::getDb()->createCommand( "SELECT SUM(CEIL(CHAR_LENGTH(msgdata)/160)) AS count FROM {{send_sms}} WHERE campaign_id = :id")->queryScalar(array(':id' => $this->id));
+    		}
+    		if ($this->finished == self::FINISHED_TRUE)
+    			self::getDb()->createCommand('UPDATE campaign SET blocksend= '.intval($this->blocksend).' WHERE id = '.$this->getPrimaryKey())->execute();
+    		return $this->blocksend;
+    	}
+    	return NULL;
+    }
+
+    /* @deprecated
+     */
+    public function getLimitExceeded(){
+    	if ($this->getPrimaryKey()){
+    		$smsblock = self::getDb()->createCommand("SELECT SUM(smsblock) FROM cporder WHERE cid = " . $this->getPrimaryKey())->queryScalar();
+    		$orderblock = self::getDb()->createCommand("SELECT SUM(smscount) FROM smsorder LEFT JOIN cporder ON cporder.oid=smsorder.id WHERE cporder.cid = " . $this->getPrimaryKey())->queryScalar();
+    		if ($this->blockimport > ($orderblock - $smsblock))
+    			return self::LIMIT_EXCEEDED;
+    		else
+    			return self::LIMIT_AVAILABLE;
+    	}
+    	else return self::LIMIT_AVAILABLE;
+    }
+
 }
