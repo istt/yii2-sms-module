@@ -15,7 +15,7 @@ class CampaignSearch extends Campaign
     public function rules()
     {
         return [
-            [['id', 'created_at', 'updated_at', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'orderid', 'exported'], 'integer'],
+            [['id', 'created_at', 'updated_at', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'exported'], 'integer'],
             [['title', 'description', 'codename', 'request_date', 'request_owner', 'datasender', 'tosubscriber', 'start', 'end', 'sender', 'template', 'cpworkday', 'esubject', 'eattachment'], 'safe'],
         		// Extra complex properties
         		[['gridTitle', 'gridStatus', 'gridTime'], 'safe']
@@ -68,7 +68,6 @@ class CampaignSearch extends Campaign
             'blocksend' => $this->blocksend,
             'sent' => $this->sent,
             'blocksent' => $this->blocksent,
-            'orderid' => $this->orderid,
             'exported' => $this->exported,
         ]);
 
@@ -86,7 +85,7 @@ class CampaignSearch extends Campaign
 
         // Extra properties for search
         if ($this->gridTitle){
-        	$query->addFilterWhere(['or',
+        	$query->andFilterWhere(['or',
         			['like', 'title', $this->gridTitle],
         			['like', 'description', $this->gridTitle],
         			['like', 'codename', $this->gridTitle],

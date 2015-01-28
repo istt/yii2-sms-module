@@ -8,6 +8,12 @@ use istt\sms\models\Filter;
 use yii\helpers\VarDumper;
 use yii\helpers\ArrayHelper;
 use istt\sms\models\Ftp;
+use kartik\widgets\StarRating;
+use kartik\widgets\DateTimePicker;
+use kartik\widgets\TouchSpin;
+use kartik\widgets\DatePicker;
+use kartik\widgets\FileInput;
+use istt\sms\models\Worktime;
 
 /**
  * @var yii\web\View $this
@@ -18,9 +24,7 @@ use istt\sms\models\Ftp;
 
 <div class="campaign-form">
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?php $this->beginBlock('basic'); // Campaign basic information ?>
+    <?php $form = ActiveForm::begin([ 'options'=>['enctype'=>'multipart/form-data']]); ?>
 
     	<div class="row">
     		<div class="col-md-9">
@@ -37,97 +41,121 @@ use istt\sms\models\Ftp;
 		    	<?= $form->field($model, 'approved', ['addon' => ['prepend' => ['content' => '<i class="glyphicon glyphicon-ok"></i>']]])
 		    			->dropDownList(['Pending', 'Approved']) ?>
 
-
-    		</div>
+		    </div>
     	</div>
 
     	<?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    	<?= $form->field($model, 'orderid')->textInput() ?>
+<div class="row">
+	<div class="col-sm-6">
 
-    <?php $this->endBlock(); ?>
+    	<?= $form->field($model, 'start')->widget(DateTimePicker::className()) ?>
 
-    <?php $this->beginBlock('meta'); // Campaign meta information ?>
+    	<?= $form->field($model, 'end')->widget(DateTimePicker::className()) ?>
 
+    	<?= $form->field($model, 'formWorktimes')->widget(Select2::className(), [
+    			'data' => ArrayHelper::map(Worktime::find()->all(), 'key', 'key'),
+    			'options'=> ['multiple' => true],
+    	])?>
+
+	</div>
+	<div class="col-sm-6">
+
+    	<?= $form->field($model, 'formWeekday')->checkBoxList([
+    			1	=>	Yii::t('app', "Sunday"),
+				2	=>	Yii::t('app', "Monday"),
+				3	=>	Yii::t('app', "Tuesday"),
+				4	=>	Yii::t('app', "Wednesday"),
+				5	=>	Yii::t('app', "Thursday"),
+				6	=>	Yii::t('app', "Friday"),
+				7	=>	Yii::t('app', "Saturday"),
+    	]) ?>
+	</div>
+</div>
+
+
+
+
+<div class="row">
+	<div class="col-md-9 col-sm-6">
 		    <?= $form->field($model, 'datasender')->textInput(['maxlength' => 80]) ?>
-
-		    <?= $form->field($model, 'tosubscriber')->textarea(['rows' => 6]) ?>
-
+		    <?= $form->field($model, 'tosubscriber')->textInput(['maxlength' => 255]) ?>
+	</div>
+	<div class="col-md-3 col-sm-6">
     	    <?= $form->field($model, 'request_owner')->textInput(['maxlength' => 40]) ?>
+		    <?= $form->field($model, 'request_date')->widget(DatePicker::className()) ?>
 
-		    <?= $form->field($model, 'request_date')->textInput() ?>
+	</div>
+</div>
 
-    <?php $this->endBlock(); ?>
 
-    <?php $this->beginBlock('setting'); ?>
+<div class="row">
+	<div class="col-sm-8">
+	    <?= $form->field($model, 'priority')->widget(StarRating::className()) ?>
 
-    	<?= $form->field($model, 'throughput')->textInput() ?>
+	</div>
+	<div class="col-sm-4">
+    	<?= $form->field($model, 'throughput')->widget(TouchSpin::className()) ?>
 
-	    <?= $form->field($model, 'priority')->textInput() ?>
+	    <?= $form->field($model, 'velocity')->widget(TouchSpin::className()) ?>
+	</div>
+</div>
 
-	    <?= $form->field($model, 'velocity')->textInput() ?>
+<div class="row">
+			<div class="col-sm-4">
+		    	<?= $form->field($model, 'col')->widget(TouchSpin::className()) ?>
+		    	<?= $form->field($model, 'isdncol')->widget(TouchSpin::className()) ?>
 
-    	<?= $form->field($model, 'sender')->textInput(['maxlength' => 20]) ?>
+			</div>
+			<div class="col-sm-8">
+		    	<?= $form->field($model, 'sender')->textInput(['maxlength' => 20]) ?>
+		    	<?= $form->field($model, 'template')->textarea(['rows' => 6]) ?>
 
-    	<?= $form->field($model, 'template')->textarea(['rows' => 6]) ?>
+			</div>
+</div>
+<hr/>
+<div class="row">
+	<div class="col-sm-6">
+		<?= $form->field($model, 'formUploadFiles[]')->widget(FileInput::className(),[
+				'options' => ['multiple' => true],
+		]) ?>
 
-    	<?= $form->field($model, 'col')->textInput() ?>
-
-    	<?= $form->field($model, 'isdncol')->textInput() ?>
-
-    <?php $this->endBlock(); ?>
-
-    <?php $this->beginBlock('data'); // Data retrieved from FTP server or file upload?>
-
+	</div>
+	<div class="col-sm-6">
     	<?= $form->field($model, 'ftpserver')->widget(Select2::className(), [
     			'data' => ($fptList = [null => Yii::t('sms', '-- Select FTP Connection --')] + ArrayHelper::map(Ftp::find()->all(), 'id', 'title'))
     	]) ?>
 
-    	<?= $form->field($model, 'filterBlacklistIds')->widget(Select2::className(), [
+    	<?= $form->field($model, 'formFtpFiles')->textarea(['rows' => 6])?>
+	</div>
+</div>
+
+<hr/>
+<div class="row">
+	<div class="col-sm-6">
+    	<?= $form->field($model, 'formBlacklist')->widget(Select2::className(), [
     			'options'=> ['multiple' => true],
     			'data' => ($filterList = ArrayHelper::map(Filter::find()->all(), 'id', 'title'))
     	])?>
-    	<?= $form->field($model, 'filterWhitelistIds')->widget(Select2::className(), [
+    	<?= $form->field($model, 'formWhitelist')->widget(Select2::className(), [
     			'options'=> ['multiple' => true],
-    			'data' => Filter::options(),
+    			'data' => $filterList,
     	])?>
 
-    <?php $this->endBlock(); ?>
-
-
-    <?php $this->beginBlock('schedule'); ?>
-
-    	<?= $form->field($model, 'start')->textInput() ?>
-
-    	<?= $form->field($model, 'end')->textInput() ?>
+	</div>
+	<div class="col-sm-6">
 
     	<?= $form->field($model, 'emailbox')->textInput() ?>
-
-    	<?= $form->field($model, 'exported')->textInput() ?>
-
-    <?php $this->endBlock(); ?>
-
-    <?php $this->beginBlock('advanced'); ?>
-
-    	<?= $form->field($model, 'cpworkday')->textInput(['maxlength' => 10]) ?>
 
     	<?= $form->field($model, 'esubject')->textInput(['maxlength' => 255]) ?>
 
     	<?= $form->field($model, 'eattachment')->textInput(['maxlength' => 255]) ?>
 
-    <?php $this->endBlock(); ?>
+	</div>
+</div>
 
 
-    <?= Collapse::widget([
-    	'items' => [
-    		['label' => Yii::t('sms', 'Basic'), 'content' => $this->blocks['basic'], 'contentOptions' => ['class' => 'in']],
-    		['label' => Yii::t('sms', 'Metadata'), 'content' => $this->blocks['meta']],
-    		['label' => Yii::t('sms', 'Setting'), 'content' => $this->blocks['setting']],
-    		['label' => Yii::t('sms', 'Data'), 'content' => $this->blocks['data']],
-    		['label' => Yii::t('sms', 'Schedule'), 'content' => $this->blocks['schedule']],
-    		['label' => Yii::t('sms', 'Advanced'), 'content' => $this->blocks['advanced']],
-    	]
-    ])?>
+
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('sms', 'Create') : Yii::t('sms', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
@@ -141,14 +169,12 @@ use istt\sms\models\Ftp;
     <?= $form->field($model, 'sent')->textInput(['maxlength' => 20]) ?>
     <?= $form->field($model, 'blocksent')->textInput(['maxlength' => 20]) ?>
 
-    <?= $form->field($model, 'createtime')->textInput() ?>
-    <?= $form->field($model, 'updatetime')->textInput() ?>
-
     <?= $form->field($model, 'finished')->textInput() ?>
     <?= $form->field($model, 'active')->textInput() ?>
     <?= $form->field($model, 'ready')->textInput() ?>
     <?= $form->field($model, 'org')->textInput() ?>
     <?= $form->field($model, 'type')->textInput() ?>
+    <?= $form->field($model, 'exported')->textInput() ?>
 
     <?php ActiveForm::end(); ?>
 

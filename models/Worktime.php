@@ -66,6 +66,15 @@ class Worktime extends \yii\db\ActiveRecord
             'Cs' => Yii::t('sms', 'cs'),
         ];
     }
+
+    /**
+     * Return the complex key as string
+     */
+    public $key;
+    public function afterFind(){
+    	$this->key = $this->start . ' - ' . $this->end;
+    	parent::afterFind();
+    }
     /**
      * @return \yii\db\ActiveQuery
      */

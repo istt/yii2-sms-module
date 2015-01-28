@@ -35,8 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
-            'createtime:datetime',
-            'updatetime:datetime',
+            'created_at:datetime',
+            'updated_at:datetime',
             'codename',
             'request_date',
             'request_owner',
@@ -70,7 +70,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'blocksend',
             'sent',
             'blocksent',
-            'orderid',
             'exported',
         ],
     ]) ?>

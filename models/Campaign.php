@@ -45,7 +45,6 @@ use Yii;
    * @property string $blocksend
    * @property string $sent
    * @property string $blocksent
-   * @property integer $orderid
    * @property integer $exported
    *
  * @property Cpfile $cpfile
@@ -81,20 +80,13 @@ class Campaign extends \yii\db\ActiveRecord
     public $gridTitle;
     public $gridStatus;
     public $gridTime;
-    public function afterFind(){
-    	/*  Calculate mixed attribute based of current attributes   */
-    	$this->gridTitle = Yii::t('sms', '<p><big>{title}</big> <small class="text text-info">{codename}</small></p><p>{description}</p><p><code>{template}</code></p>', $this->getAttributes());
-    	$this->gridStatus = Yii::t('sms', '{status} {ready} {active} {finished}', [
-    			'status' => $this->status?Yii::t('sms', '<span class="label label-primary">Enable</span>'):Yii::t('sms', '<span class="label label-warning">Disable</span>'),
-    			'ready' => ($this->ready == 0)?Yii::t('sms', '<span class="label label-default">Not Imported</span>'):(
-    					($this->ready == 1)?Yii::t('sms', '<span class="label label-info">Imported</span>'):
-    						Yii::t('sms', '<span class="label label-success">Filtered</span>')),
-    			'active' => $this->active?Yii::t('sms', '<span class="label label-primary">Active</span>'):Yii::t('sms', '<span class="label label-default">Pending</span>'),
-    			'finished' => $this->status?Yii::t('sms', '<span class="label label-success">Finished</span>'):Yii::t('sms', '<span class="label label-default">Not Finished</span>'),
-    	]);
-    	$this->gridTime = Yii::t('sms', '{start} - {end}', $this->getAttributes());
-    	parent::afterFind();
-    }
+    /* Follow attributes are safe  */
+    public $formWeekday;
+    public $formFtpFiles;
+    public $formUploadFiles;
+    public $formBlacklist;
+    public $formWhitelist;
+    public $formWorktimes;
 
     /**
      * @inheritdoc
@@ -103,7 +95,7 @@ class Campaign extends \yii\db\ActiveRecord
     {
         return [
             [['description', 'tosubscriber', 'template'], 'string'],
-            [['created_at', 'updated_at', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'orderid', 'exported'], 'integer'],
+            [['created_at', 'updated_at', 'status', 'finished', 'approved', 'active', 'ready', 'org', 'type', 'throughput', 'col', 'isdncol', 'priority', 'velocity', 'emailbox', 'ftpserver', 'smsimport', 'blockimport', 'limit_exceeded', 'send', 'blocksend', 'sent', 'blocksent', 'exported'], 'integer'],
             [['request_date', 'start', 'end'], 'safe'],
             [['active', 'isdncol', 'cpworkday'], 'required'],
             [['title', 'request_owner'], 'string', 'max' => 40],
@@ -112,8 +104,45 @@ class Campaign extends \yii\db\ActiveRecord
             [['cpworkday'], 'string', 'max' => 10],
             [['esubject', 'eattachment'], 'string', 'max' => 255],
         		// Extra attributes
-        		[['filterBlacklistIds', 'filterWhitelistIds'], 'safe']
+        		[['formWeekday', 'formWorktimes', 'formBlacklist', 'formWhitelist'], 'safe'], // Array attributes
+        		[['formFtpFiles'], 'string'],
+        		[['formUploadFiles'], 'file'],
+        		[['end'], 'compare', 'compareAttribute' => 'start', 'operator' => '>'],
         ];
+    }
+    /**
+     * Calculate complex attributes based on database attributes
+     * @see \yii\db\BaseActiveRecord::afterFind()
+     */
+    public function afterFind(){
+    	/*  Calculate mixed attribute based of current attributes   */
+    	$this->gridTitle = Yii::t('sms', '<p><big>{title}</big> <small class="text text-info">{codename}</small></p><p>{description}</p><p><code>{template}</code></p>', $this->getAttributes());
+    	$this->gridStatus = Yii::t('sms', '{status} {ready} {active} {finished}', [
+    			'status' => $this->status?Yii::t('sms', '<span class="label label-primary">Enable</span>'):Yii::t('sms', '<span class="label label-warning">Disable</span>'),
+    			'ready' => ($this->ready == 0)?Yii::t('sms', '<span class="label label-default">Not Imported</span>'):(
+    					($this->ready == 1)?Yii::t('sms', '<span class="label label-info">Imported</span>'):
+    					Yii::t('sms', '<span class="label label-success">Filtered</span>')),
+    			'active' => $this->active?Yii::t('sms', '<span class="label label-primary">Active</span>'):Yii::t('sms', '<span class="label label-default">Pending</span>'),
+    			'finished' => $this->status?Yii::t('sms', '<span class="label label-success">Finished</span>'):Yii::t('sms', '<span class="label label-default">Not Finished</span>'),
+    	]);
+    	$this->gridTime = Yii::t('sms', '{start} - {end}', $this->getAttributes());
+    	/*  Calculate all extra form attributes */
+    	$this->formWeekday = str_split($this->cpworkday);
+    	parent::afterFind();
+    }
+    /**
+     * Convert array attributes to string
+     * @see \yii\base\Model::beforeValidate()
+     */
+    public function beforeValidate(){
+    	if ($this->formWeekday) $this->cpworkday = implode('', $this->formWeekday);
+    	return parent::beforeValidate();
+    }
+    /**
+     * Load related records for form attributes
+     */
+    public function initForm(){
+
     }
 
     /**
@@ -160,7 +189,6 @@ class Campaign extends \yii\db\ActiveRecord
             'blocksend' => Yii::t('sms', 'Blocksend'),
             'sent' => Yii::t('sms', 'Sent'),
             'blocksent' => Yii::t('sms', 'Blocksent'),
-            'orderid' => Yii::t('sms', 'Orderid'),
             'exported' => Yii::t('sms', 'Exported'),
 
             'Cpfile' => Yii::t('sms', 'cpfile'),
@@ -177,7 +205,7 @@ class Campaign extends \yii\db\ActiveRecord
      */
     public function getCpfile()
     {
-        return $this->hasOne(Cpfile::className(), ['cid' => 'id']);
+        return $this->hasMany(Cpfile::className(), ['cid' => 'id']);
     }
 
     /**
@@ -193,7 +221,7 @@ class Campaign extends \yii\db\ActiveRecord
      */
     public function getCpfilter()
     {
-        return $this->hasOne(Cpfilter::className(), ['cid' => 'id']);
+        return $this->hasMany(Cpfilter::className(), ['cid' => 'id']);
     }
 
     /**
@@ -201,7 +229,7 @@ class Campaign extends \yii\db\ActiveRecord
      */
     public function getCpworktime()
     {
-        return $this->hasOne(Cpworktime::className(), ['cid' => 'id']);
+        return $this->hasMany(Cpworktime::className(), ['cid' => 'id']);
     }
 
     /**
@@ -217,7 +245,7 @@ class Campaign extends \yii\db\ActiveRecord
      */
     public function getFtpfilename()
     {
-        return $this->hasOne(Ftpfilename::className(), ['cid' => 'id']);
+        return $this->hasMany(Ftpfilename::className(), ['cid' => 'id']);
     }
 
     const FINISHED_TRUE 	= 1;

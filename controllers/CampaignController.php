@@ -9,6 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use istt\sms\models\Cpfilter;
+use yii\helpers\VarDumper;
+use yii\web\UploadedFile;
 
 /**
  * CampaignController implements the CRUD actions for Campaign model.
@@ -52,6 +54,27 @@ class CampaignController extends Controller
         return $this->render('viewCampaign', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    public function actionNew(){
+    	$model = new Campaign;
+    	if ($model->load(Yii::$app->request->post()) && $model->validate()){
+    		Yii::trace(VarDumper::dumpAsString($model));
+    		$uploadedFiles = UploadedFile::getInstances($model, 'formUploadFiles');
+    		foreach ($uploadedFiles as $file){
+    			$filePath = "/tmp/" . $file->name;
+    			if ($uploadedFiles instanceof UploadedFile){
+    				$file->saveAs($filePath);
+    			}
+    		}
+    		Yii::trace(VarDumper::dumpAsString($uploadedFiles));
+    	} else {
+    		$model->initForm();
+
+    	}
+    	return $this->render('createCampaign', [
+    			'model' => $model,
+    	]);
     }
 
     /**
