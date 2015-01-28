@@ -14,6 +14,7 @@ use kartik\widgets\TouchSpin;
 use kartik\widgets\DatePicker;
 use kartik\widgets\FileInput;
 use istt\sms\models\Worktime;
+use istt\sms\models\File;
 
 /**
  * @var yii\web\View $this
@@ -119,6 +120,11 @@ use istt\sms\models\Worktime;
 		<?= $form->field($model, 'formUploadFiles[]')->widget(FileInput::className(),[
 				'options' => ['multiple' => true],
 		]) ?>
+		<?= $form->field($model, 'formExistFiles')->widget(Select2::className(),[
+				'options' => ['multiple' => true],
+				'data' => $files = [null => Yii::t('sms', '-- Select exist files --')] + ArrayHelper::map(File::find()->all(), 'fid', 'title')
+		]) ?>
+
 
 	</div>
 	<div class="col-sm-6">

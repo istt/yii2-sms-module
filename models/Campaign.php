@@ -87,6 +87,7 @@ class Campaign extends \yii\db\ActiveRecord
     public $formBlacklist;
     public $formWhitelist;
     public $formWorktimes;
+    public $formExistFiles;
 
     /**
      * @inheritdoc
@@ -106,7 +107,8 @@ class Campaign extends \yii\db\ActiveRecord
         		// Extra attributes
         		[['formWeekday', 'formWorktimes', 'formBlacklist', 'formWhitelist'], 'safe'], // Array attributes
         		[['formFtpFiles'], 'string'],
-        		[['formUploadFiles'], 'file'],
+        		[['formUploadFiles'], 'file', 'maxFiles' => 255],
+        		[['formExistFiles'], 'safe'],
         		[['end'], 'compare', 'compareAttribute' => 'start', 'operator' => '>'],
         ];
     }

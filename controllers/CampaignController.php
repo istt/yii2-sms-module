@@ -11,6 +11,10 @@ use yii\filters\VerbFilter;
 use istt\sms\models\Cpfilter;
 use yii\helpers\VarDumper;
 use yii\web\UploadedFile;
+use yii\web\HttpException;
+use istt\sms\models\File;
+use istt\sms\models\Sms;
+use istt\sms\models\Cpfile;
 
 /**
  * CampaignController implements the CRUD actions for Campaign model.
@@ -86,24 +90,35 @@ class CampaignController extends Controller
     {
         $model = new Campaign;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-        	/* Save related blacklist & whitelist filters  */
-        	Cpfilter::deleteAll(['cid' => $model->primaryKey]);
-        	foreach ($model->filterBlacklistIds as $fid){
-        		$cpfilter = new Cpfilter();
-        		$cpfilter->cid = $model->primaryKey;
-        		$cpfilter->fid = $fid;
-        		$cpfilter->type = 0;
-        		$cpfilter->save();
-        	}
-        	foreach ($model->filterWhitelistIds as $fid){
-        		$cpfilter = new Cpfilter();
-        		$cpfilter->cid = $model->primaryKey;
-        		$cpfilter->fid = $fid;
-        		$cpfilter->type = 1;
-        		$cpfilter->save();
-        	}
-        	/* TODO: Save uploaded files  */
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        	$model->attributes = $_POST['Campaign'];
+			if ($model->emailbox) {
+				$model->ready = Campaign::READY_ALL;
+				$model->finished = Campaign::FINISHED_TRUE;
+				$model->template = '';
+			} else {
+				$model->finished = Campaign::FINISHED_FALSE;
+				$model->ready = Campaign::READY_NOTYET;
+			}
+			if ($model->save()){
+				$fileModel = new File();
+				$fileModel->setFileInstance($file, $model->getDirectory());
+				$fileModel->save();
+				$cpfile = new Cpfile();
+				$cpfile->cid = $model->id;
+				$cpfile->fid = $fileModel->fid;
+				$cpfile->save();
+			}
+			// Allow user to choose Existing Files...
+			$cpf = [];
+			if (! empty($_POST['Campaign']['cpf']) && is_array($cpf = $_POST['Campaign']['cpf']))
+				foreach ($cpf as $fid) {
+					if (empty($fid)) continue;
+					$n = new Cpfile();
+					$n->cid = $model->id;
+					$n->fid = $fid;
+					$n->save();
+				}
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -132,7 +147,42 @@ class CampaignController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->finished == Campaign::FINISHED_TRUE)
+        	throw new CHttpException(403, 'Chương trình này đã hoàn thành nên không thể sửa đổi được nữa.');
+        if (!(Yii::$app->user->can('/sms/sms/admin')) && ($model->approved == Campaign::APPROVED_TRUE))
+        	throw new CHttpException(403, 'Chương trình này đã được xét duyệt nên không thể sửa đổi được nữa.');
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        	$model->ready = Campaign::READY_NOTYET;
+        	if ($model->save()){
+        		if ($model->approved){
+        			Sms::deleteAll(['campaign_id' => $model->id]);
+        		}
+        		Cpfile::updateAll(['status' => Cpfile::STATUS_NEW], ['cid' => $model->id]);
+        		/* Handle Uploaded Files */
+        		$datafiles = UploadedFile::getInstances($model, 'formUploadFiles');
+        		foreach ($datafiles as $file) {
+        			// FIXME: Check to see if this file already exists...
+        			$fileModel = new File();
+        			$fileModel->setFileInstance($file, $model->getDirectory());
+        			$fileModel->save();
+        			$cpfile = new Cpfile();
+        			$cpfile->cid = $model->id;
+        			$cpfile->fid = $fileModel->fid;
+        			$cpfile->save();
+        		}
+        		/* Handle existing files */
+        		$cpf = array();
+        		if (! empty($_POST['Campaign']['cpf']) && is_array($cpf = $_POST['Campaign']['cpf'])){
+        			foreach ($cpf as $fid) {
+        				if (empty($fid)) continue;
+        				$n = new Cpfile();
+        				$n->cid = $model->id;
+        				$n->fid = $fid;
+        				$n->save();
+        			}
+        		}
+        	}
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('updateCampaign', [
@@ -149,7 +199,12 @@ class CampaignController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if (!(Yii::$app->user->can('sms/sms/admin')) && ($model->approved == Campaign::APPROVED_TRUE))
+        	throw new HttpException(403, Yii::t('sms', 'Cannot delete Approved Campaign.'));
+        if ($model->finished == Campaign::FINISHED_TRUE)
+        	throw new CHttpException(403, Yii::t('sms', 'Cannot delete Finished Campaign.'));
+        $model->delete();
 
         return $this->redirect(['index']);
     }
