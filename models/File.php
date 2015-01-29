@@ -3,6 +3,7 @@
 namespace istt\sms\models;
 
 use Yii;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "datafile".
@@ -43,12 +44,14 @@ class File extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    const STATUS_REMOVED = 0;
+    const STATUS_EXISTS = 1;
     public function rules()
     {
         return [
             [['title', 'description'], 'required'],
             [['description'], 'string'],
-            [['createtime', 'filesize', 'status', 'updatetime', 'uid'], 'integer'],
+            [['status'], 'in', 'range' => [self::STATUS_REMOVED, self::STATUS_EXISTS]],
             [['title', 'filename', 'uri', 'filemime'], 'string', 'max' => 255],
             [['uri'], 'unique']
         ];
@@ -88,5 +91,87 @@ class File extends \yii\db\ActiveRecord
     public function getCampaigns()
     {
         return $this->hasMany(Campaign::className(), ['id' => 'cid'])->viaTable(Cpfile::tableName(), ['fid' => 'fid']);
+    }
+
+    /**
+     * Run after validate()
+     */
+    private function getBasePath(){
+    	$path = Yii::getAlias("@web/uploads/campaigns");
+    	FileHelper::createDirectory($path, 0755, true);
+   		return $path;
+    }
+    public function fileUri2Path($uri = null){
+    	if (empty($uri)) $uri = $this->uri;
+    	return str_replace('public://', $this->getBasePath(), $uri);
+    }
+    public function filePath2Uri($path = null){
+    	if (empty($path)) $path = $this->filepath;
+    	return str_replace($this->getBasePath(), 'public://', $path);
+    }
+    public function getDownload($path = null){
+    	if (empty($path)) $path = $this->filepath;
+    	return  '<a href="'.Yii::app()->getBaseUrl() . str_replace(Yii::getPathOfAlias("application"), '/protected', $path) . '">'.$this->filename.'</a>' ;
+    }
+    public function fileProperties($path = null){
+    	if (empty($path)) $path = $this->filepath;
+    	$fileinfo = pathinfo($path);
+    	if (empty($this->title)) $this->title = $fileinfo['basename'];
+    	if (empty($this->description)) $this->description = $fileinfo['basename'];
+    	$this->filename = $fileinfo['basename'];
+    	$this->filesize = filesize($path);
+    	$this->filemime = FileHelper::getMimeType($path);
+    	$this->uri = $this->filePath2Uri($path);
+    	$this->status = $this->getFileStatus($path);
+    }
+
+    public function getFileStatus($path = null){
+    	if (empty($path)) $path = $this->filepath;
+    	return ((file_exists($path))?(self::STATUS_EXISTS):(self::STATUS_REMOVED));
+    }
+    protected function afterFind() {
+    	$this->filepath = $this->fileUri2Path();
+    	$this->status = $this->getFileStatus();
+    	if ($this->status == self::STATUS_REMOVED) $this->delete();
+    	parent::afterFind();
+    }
+    /**
+     * Set the file instance for this module.
+     * @param CUploadedFile $file The uploaded file.
+     * @param string $directory	The directory to save to.
+     */
+    public function setFileInstance(CUploadedFile $file, $directory = null) {
+    	if (empty($directory)) {
+    		$directory = $this->getBasePath();
+    	} else $directory = DirectoryHelper::safe_directory($directory);
+    	$this->fileInstance = $file;
+    	$this->filepath = $directory . DIRECTORY_SEPARATOR . $file->getName();
+    	$ext = $file->getExtensionName();
+    	if ($ext)
+    		$prefix = substr($this->filepath, 0, strpos($this->filepath, $ext));
+    	else $prefix = $this->filepath;
+    	$suffix = 0;
+    	while (file_exists($this->filepath)) {
+    		$this->filepath = $prefix . '_' . $suffix . '.' . $ext;
+    		$suffix++;
+    	}
+    	$file->saveAs($this->filepath);
+    	$this->filename = basename($this->filepath);
+    	if (empty($this->title)) $this->title = $this->filename;
+    	if (empty($this->description)) $this->description = $this->filename;
+    	$this->filesize = $file->getSize();
+    	$this->filemime = $file->getType();
+    	$this->uri = $this->filePath2Uri();
+    	$this->status = $this->getFileStatus();
+    }
+    /**
+     * Helper functions for options
+     */
+    const STATUS_REMOVED = 0;
+    const STATUS_EXISTS = 1;
+    public function beforeDelete(){
+    	@unlink($this->fileUri2Path());
+    	Cpfile::deleteAll(['fid' => $this->primaryKey]);
+    	parent::beforeDelete();
     }
 }

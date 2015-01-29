@@ -3,7 +3,6 @@
  * Return a list of menu item suitable for display in the main Nav
  */
 return [
-	['label' => \Yii::t('sms', 'SMS'), 'url' => '#', 'items' => [
 		['label' => Yii::t('sms', 'Campaigns'), 'url'=>['/sms/campaign']],
 		['label' => Yii::t('sms', 'Organization'), 'url'=>['/sms/organization']],
 		['label' => Yii::t('sms', 'SMS Template'), 'url'=>['/sms/template']],
@@ -19,5 +18,4 @@ return [
 		['label' => Yii::t('sms', 'Blacklist'), 'url'=>['/sms/blacklist']],
 		['label' => Yii::t('sms', 'Whitelist'), 'url'=>['/sms/whitelist']],
 		['label' => Yii::t('sms', 'User'), 'url'=>['/sms/user']],
-	]]
 ];
